@@ -3,161 +3,365 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Нажми меня</title>
+<title>☢ Нажми ☢</title>
 <style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  
-  body {
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    background: #0a0a0a;
-    font-family: 'Segoe UI', system-ui, sans-serif;
-    overflow: hidden;
-    cursor: pointer;
-    user-select: none;
-  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html, body { height:100%; overflow:hidden; background:#000;
+    font-family:'Impact','Arial Black',sans-serif; }
+  body { cursor:pointer; user-select:none; }
 
+  #stage { position:fixed; inset:0; display:flex; align-items:center; justify-content:center; }
+
+  /* ==== КНОПКА ==== */
   #btn {
-    padding: 24px 60px;
-    font-size: 28px;
-    font-weight: 800;
-    color: #fff;
-    background: linear-gradient(135deg, #667eea, #764ba2, #f093fb, #f5576c);
-    background-size: 300% 300%;
-    border: none;
-    border-radius: 60px;
-    cursor: pointer;
-    box-shadow: 0 10px 40px rgba(240, 87, 108, 0.5), 0 0 80px rgba(118, 75, 162, 0.3);
-    animation: gradientShift 3s ease infinite, pulse 2s ease-in-out infinite;
-    transition: transform 0.15s;
-    letter-spacing: 2px;
-    text-transform: uppercase;
+    position:relative; padding:28px 70px; font-size:30px; font-weight:900;
+    color:#fff; letter-spacing:4px; text-transform:uppercase;
+    background:linear-gradient(135deg,#667eea,#764ba2,#f093fb,#f5576c);
+    background-size:300% 300%;
+    border:3px solid rgba(255,255,255,0.3); border-radius:100px; cursor:pointer;
+    animation:gradientShift 3s ease infinite;
+    box-shadow:0 0 40px rgba(240,87,108,0.6), 0 0 80px rgba(118,75,162,0.4);
+    transition:transform 0.15s; z-index:50;
   }
-
-  #btn:hover { transform: scale(1.05); }
-  #btn:active { transform: scale(0.95); }
-
+  #btn:hover { transform:scale(1.05); }
+  #btn:active { transform:scale(0.9); }
   @keyframes gradientShift {
-    0%   { background-position: 0% 50%; }
-    50%  { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
+    0%,100% { background-position:0% 50%; }
+    50% { background-position:100% 50%; }
+  }
+  #btn.charging {
+    animation:charge 0.08s linear infinite;
+    filter:brightness(2.2) saturate(3);
+  }
+  @keyframes charge {
+    0% { transform:translate(-6px,3px) scale(1.05) rotate(-1deg); }
+    25% { transform:translate(6px,-3px) scale(1.1) rotate(1deg); }
+    50% { transform:translate(-5px,-5px) scale(1.08) rotate(-0.5deg); }
+    75% { transform:translate(5px,5px) scale(1.05) rotate(0.5deg); }
+    100% { transform:translate(0,0) scale(1); }
+  }
+  #btn.explode { animation:explode 0.35s ease-out forwards; }
+  @keyframes explode {
+    0% { transform:scale(1); opacity:1; filter:brightness(4); }
+    60% { transform:scale(2.5); opacity:1; filter:brightness(15); }
+    100% { transform:scale(6); opacity:0; filter:brightness(30); }
   }
 
-  @keyframes pulse {
-    0%, 100% { box-shadow: 0 10px 40px rgba(240,87,108,0.5), 0 0 80px rgba(118,75,162,0.3); }
-    50%      { box-shadow: 0 10px 60px rgba(240,87,108,0.9), 0 0 120px rgba(118,75,162,0.6); }
+  /* ==== ФРАЗА ==== */
+  #phrase {
+    position:fixed; inset:0; display:flex; align-items:center; justify-content:center;
+    font-size:clamp(2rem, 13vw, 11rem); font-weight:900; text-transform:uppercase;
+    letter-spacing:2px; text-align:center; padding:20px; line-height:0.95;
+    opacity:0; transform:scale(8); z-index:120; pointer-events:none;
+    background:linear-gradient(90deg,#ff0080,#ff8c00,#ffd700,#00ff88,#00d4ff,#a855f7,#ff0080);
+    background-size:400% 100%;
+    -webkit-background-clip:text; background-clip:text;
+    -webkit-text-fill-color:transparent;
+    filter:drop-shadow(0 0 20px #fff) drop-shadow(0 0 60px #ff0080)
+           drop-shadow(0 0 100px #a855f7);
   }
-
-  #text {
-    position: fixed;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: clamp(2rem, 12vw, 10rem);
-    font-weight: 900;
-    text-transform: uppercase;
-    letter-spacing: 4px;
-    text-align: center;
-    padding: 20px;
-    pointer-events: none;
-    opacity: 0;
-    transform: scale(0.3) rotate(-10deg);
-    background: linear-gradient(90deg, #ff0080, #ff8c00, #ffd700, #00ff88, #00d4ff, #a855f7, #ff0080);
-    background-size: 400% 100%;
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    filter: drop-shadow(0 0 20px rgba(255,255,255,0.3)) drop-shadow(0 0 40px rgba(255,0,128,0.5));
-    z-index: 10;
+  #phrase.slam {
+    animation:slam 0.8s cubic-bezier(0.34,1.56,0.64,1) forwards,
+              rainbowShift 2s linear infinite,
+              wiggle 1.2s ease-in-out infinite 0.8s;
   }
-
-  #text.show {
-    animation: 
-      appear 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards,
-      rainbow 2s linear infinite,
-      wiggle 1.5s ease-in-out infinite;
+  @keyframes slam {
+    0%   { opacity:0; transform:scale(8) rotate(-15deg); filter:blur(30px) drop-shadow(0 0 20px #fff) drop-shadow(0 0 60px #ff0080) drop-shadow(0 0 100px #a855f7); }
+    55%  { opacity:1; transform:scale(0.88) rotate(3deg); filter:blur(0) drop-shadow(0 0 20px #fff) drop-shadow(0 0 60px #ff0080) drop-shadow(0 0 100px #a855f7); }
+    75%  { transform:scale(1.06) rotate(-1.5deg); }
+    100% { opacity:1; transform:scale(1) rotate(0deg); filter:blur(0) drop-shadow(0 0 20px #fff) drop-shadow(0 0 60px #ff0080) drop-shadow(0 0 100px #a855f7); }
   }
-
-  @keyframes appear {
-    to { opacity: 1; transform: scale(1) rotate(0deg); }
+  @keyframes rainbowShift {
+    0% { background-position:0% 50%; }
+    100% { background-position:400% 50%; }
   }
-
-  @keyframes rainbow {
-    0%   { background-position: 0% 50%; }
-    100% { background-position: 400% 50%; }
-  }
-
   @keyframes wiggle {
-    0%, 100% { transform: scale(1) rotate(-2deg); }
-    50%      { transform: scale(1.08) rotate(2deg); }
+    0%,100% { transform:scale(1) rotate(-2deg); }
+    50% { transform:scale(1.06) rotate(2deg); }
   }
 
-  .confetti {
-    position: fixed;
-    width: 10px;
-    height: 10px;
-    pointer-events: none;
-    z-index: 5;
-    animation: fall 3s linear forwards;
+  /* ==== СЛОИ ==== */
+  #vignette {
+    position:fixed; inset:0; pointer-events:none; z-index:100;
+    background:radial-gradient(circle at center, transparent 15%, rgba(0,0,0,0.98) 85%);
+    opacity:0; transition:opacity 0.4s;
+  }
+  #vignette.show { opacity:1; }
+
+  #redAlert {
+    position:fixed; inset:0; pointer-events:none; z-index:90;
+    background:radial-gradient(circle, transparent 25%, rgba(255,0,0,0.7) 100%);
+    opacity:0;
+  }
+  #redAlert.show { opacity:1; animation:alertPulse 0.2s ease-in-out infinite alternate; }
+  @keyframes alertPulse {
+    from { filter:brightness(0.7); }
+    to { filter:brightness(1.6); }
   }
 
-  @keyframes fall {
-    0%   { transform: translateY(-20px) rotate(0deg); opacity: 1; }
-    100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+  #flash {
+    position:fixed; inset:0; background:#fff; opacity:0;
+    pointer-events:none; z-index:200;
+  }
+  #flash.show { animation:flash 0.45s ease-out forwards; }
+  @keyframes flash {
+    0% { opacity:1; }
+    30% { opacity:1; }
+    100% { opacity:0; }
+  }
+
+  /* ==== ТРЯСКА ==== */
+  body.shake-soft { animation:shakeSoft 0.1s linear infinite; }
+  body.shake-hard { animation:shakeHard 0.07s linear infinite; }
+  @keyframes shakeSoft {
+    0%,100% { transform:translate(0,0); }
+    25% { transform:translate(-2px,1px); }
+    50% { transform:translate(2px,-1px); }
+    75% { transform:translate(-1px,-2px); }
+  }
+  @keyframes shakeHard {
+    0%,100% { transform:translate(0,0) rotate(0deg); }
+    20% { transform:translate(-12px,8px) rotate(-0.6deg); }
+    40% { transform:translate(12px,-8px) rotate(0.6deg); }
+    60% { transform:translate(-8px,-12px) rotate(-0.4deg); }
+    80% { transform:translate(8px,12px) rotate(0.4deg); }
+  }
+
+  /* ==== ЧАСТИЦЫ ==== */
+  .particle {
+    position:fixed; border-radius:50%;
+    pointer-events:none; z-index:80; transform-origin:center;
+  }
+
+  /* ==== УДАРНЫЕ ВОЛНЫ ==== */
+  .shockwave {
+    position:fixed; top:50%; left:50%;
+    width:20px; height:20px; border-radius:50%;
+    border:8px solid rgba(255,255,255,0.95);
+    transform:translate(-50%,-50%);
+    pointer-events:none; z-index:110;
+    box-shadow:0 0 40px #fff, 0 0 80px #ff0080, 0 0 120px #a855f7;
+    animation:shockwave 1.1s cubic-bezier(0.2,0.6,0.4,1) forwards;
+  }
+  @keyframes shockwave {
+    0%   { width:20px; height:20px; opacity:1; border-width:24px; }
+    100% { width:250vmax; height:250vmax; opacity:0; border-width:1px; }
   }
 
   .hint {
-    position: fixed;
-    bottom: 30px;
-    color: rgba(255,255,255,0.4);
-    font-size: 14px;
-    letter-spacing: 3px;
-    text-transform: uppercase;
+    position:fixed; bottom:20px; left:50%; transform:translateX(-50%);
+    color:rgba(255,255,255,0.3); font-size:12px; letter-spacing:5px;
+    text-transform:uppercase; z-index:300; font-family:monospace;
+    animation:hintPulse 2s ease-in-out infinite;
   }
+  @keyframes hintPulse { 0%,100% { opacity:0.3; } 50% { opacity:0.7; } }
 </style>
 </head>
 <body>
 
-  <button id="btn">Нажми на меня</button>
-  <div id="text">денис иди нахуй</div>
-  <div class="hint">кликни ещё раз чтобы увидеть снова</div>
+<div id="stage"><button id="btn">нажми</button></div>
+
+<div id="redAlert"></div>
+<div id="vignette"></div>
+<div id="flash"></div>
+<div id="phrase">денис<br>иди нахуй</div>
+
+<div class="hint" id="hint">click to detonate</div>
 
 <script>
-  const btn = document.getElementById('btn');
-  const text = document.getElementById('text');
-  const colors = ['#ff0080','#ff8c00','#ffd700','#00ff88','#00d4ff','#a855f7','#f5576c','#667eea'];
+  const btn     = document.getElementById('btn');
+  const phrase  = document.getElementById('phrase');
+  const vignette= document.getElementById('vignette');
+  const redAlert= document.getElementById('redAlert');
+  const flash   = document.getElementById('flash');
+  const hint    = document.getElementById('hint');
 
-  function boom() {
-    // перезапуск анимации текста
-    text.classList.remove('show');
-    void text.offsetWidth;
-    text.classList.add('show');
+  const sleep = ms => new Promise(r => setTimeout(r, ms));
+  let busy = false;
 
-    // конфетти
-    for (let i = 0; i < 80; i++) {
-      const c = document.createElement('div');
-      c.className = 'confetti';
-      c.style.left = Math.random() * 100 + 'vw';
-      c.style.background = colors[Math.floor(Math.random() * colors.length)];
-      c.style.animationDuration = (1.5 + Math.random() * 2) + 's';
-      c.style.animationDelay = Math.random() * 0.4 + 's';
-      c.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
-      c.style.width = c.style.height = (6 + Math.random() * 12) + 'px';
-      document.body.appendChild(c);
-      setTimeout(() => c.remove(), 3500);
+  const COLORS = ['#ff0080','#ff8c00','#ffd700','#00ff88','#00d4ff','#a855f7','#ffffff'];
+
+  /* ---- частица, летящая из точки наружу ---- */
+  function particle(x, y, { angle, speed=300, dur=1, size=8, color } = {}) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    p.style.width = p.style.height = size + 'px';
+    p.style.left = x + 'px';
+    p.style.top  = y + 'px';
+    const c = color || COLORS[Math.floor(Math.random() * COLORS.length)];
+    p.style.background = c;
+    p.style.boxShadow = `0 0 ${size*2}px ${c}, 0 0 ${size*4}px ${c}`;
+    document.body.appendChild(p);
+
+    const a = angle ?? (Math.random() * Math.PI * 2);
+    const s = speed * (0.6 + Math.random() * 0.8);
+    const dx = Math.cos(a) * s;
+    const dy = Math.sin(a) * s;
+
+    p.animate(
+      [
+        { transform: 'translate(0,0) scale(1)', opacity: 1 },
+        { transform: `translate(${dx}px,${dy}px) scale(0)`, opacity: 0 }
+      ],
+      { duration: dur * 1000, easing: 'cubic-bezier(0.15,0.7,0.3,1)' }
+    ).onfinish = () => p.remove();
+  }
+
+  function explosion(cx, cy, n = 90) {
+    for (let i = 0; i < n; i++) {
+      particle(cx, cy, {
+        speed: 200 + Math.random() * 700,
+        dur: 0.5 + Math.random() * 0.9,
+        size: 4 + Math.random() * 10
+      });
     }
   }
 
-  btn.addEventListener('click', (e) => {
-    e.stopPropagation();
-    boom();
-  });
+  function impactBurst(cx, cy, n = 120) {
+    for (let i = 0; i < n; i++) {
+      const angle = Math.random() * Math.PI * 2;
+      particle(cx, cy, {
+        angle,
+        speed: 400 + Math.random() * 900,
+        dur: 0.6 + Math.random() * 0.9,
+        size: 6 + Math.random() * 14
+      });
+    }
+  }
 
-  document.body.addEventListener('click', boom);
+  /* ---- частицы слетаются С КРАЁВ В ЦЕНТР ---- */
+  function convergence(cx, cy, n = 70) {
+    const R = Math.max(window.innerWidth, window.innerHeight) * 0.75;
+    for (let i = 0; i < n; i++) {
+      const a = (i / n) * Math.PI * 2 + Math.random() * 0.3;
+      const sx = cx + Math.cos(a) * R;
+      const sy = cy + Math.sin(a) * R;
+
+      const p = document.createElement('div');
+      p.className = 'particle';
+      const size = 3 + Math.random() * 7;
+      p.style.width = p.style.height = size + 'px';
+      p.style.left = sx + 'px';
+      p.style.top  = sy + 'px';
+      p.style.background = '#fff';
+      p.style.boxShadow = '0 0 15px #fff, 0 0 30px #ff0080, 0 0 50px #a855f7';
+      document.body.appendChild(p);
+
+      const delay = Math.random() * 300;
+      p.animate(
+        [
+          { transform: 'translate(0,0) scale(1)', opacity: 0.9 },
+          { transform: `translate(${cx - sx}px,${cy - sy}px) scale(2.2)`, opacity: 1 }
+        ],
+        {
+          duration: 650,
+          delay,
+          easing: 'cubic-bezier(0.6,0,0.8,1)',
+          fill: 'forwards'
+        }
+      ).onfinish = () => p.remove();
+    }
+  }
+
+  function shockwave(delay = 0) {
+    setTimeout(() => {
+      const sw = document.createElement('div');
+      sw.className = 'shockwave';
+      document.body.appendChild(sw);
+      setTimeout(() => sw.remove(), 1300);
+    }, delay);
+  }
+
+  /* ================================================= */
+  /* ===============  ЭПИЧНАЯ СЦЕНА  ================= */
+  /* ================================================= */
+  async function epicSequence() {
+    const rect = btn.getBoundingClientRect();
+    const cx = rect.left + rect.width / 2;
+    const cy = rect.top + rect.height / 2;
+
+    /* ---------- ФАЗА 1: ЗАРЯД ---------- */
+    btn.classList.add('charging');
+    // лёгкие искры от кнопки
+    for (let i = 0; i < 15; i++) {
+      setTimeout(() => particle(cx + (Math.random()-0.5)*100, cy + (Math.random()-0.5)*50, {
+        speed: 80, dur: 0.3, size: 2, color: '#fff'
+      }), i * 30);
+    }
+    await sleep(750);
+
+    /* ---------- ФАЗА 2: КРАСНАЯ ТРЕВОГА ---------- */
+    redAlert.classList.add('show');
+    document.body.classList.add('shake-hard');
+    await sleep(450);
+
+    /* ---------- ФАЗА 3: ВЗРЫВ КНОПКИ ---------- */
+    btn.classList.add('explode');
+    explosion(cx, cy, 100);
+    shockwave();
+    await sleep(400);
+
+    /* ---------- ФАЗА 4: ТЬМА + СХОЖДЕНИЕ ЭНЕРГИИ ---------- */
+    document.body.classList.remove('shake-hard');
+    redAlert.classList.remove('show');
+    vignette.classList.add('show');
+    document.body.classList.add('shake-soft');
+    convergence(window.innerWidth / 2, window.innerHeight / 2, 80);
+    await sleep(800);
+
+    /* ---------- ФАЗА 5: БЕЛАЯ ВСПЫШКА + ВОЛНЫ ---------- */
+    flash.classList.add('show');
+    shockwave(0);
+    shockwave(80);
+    shockwave(180);
+    document.body.classList.remove('shake-soft');
+    document.body.classList.add('shake-hard');
+    await sleep(280);
+
+    /* ---------- ФАЗА 6: ФРАЗА ВЛЕТАЕТ ---------- */
+    flash.classList.remove('show');
+    phrase.classList.add('slam');
+    impactBurst(window.innerWidth / 2, window.innerHeight / 2, 140);
+    shockwave(0);
+    shockwave(120);
+    hint.textContent = 'click to replay';
+    await sleep(900);
+
+    document.body.classList.remove('shake-hard');
+    vignette.classList.remove('show');
+  }
+
+  /* ================================================= */
+  /* ============  ВОСПРОИЗВЕДЕНИЕ / СБРОС  ========== */
+  /* ================================================= */
+  async function play() {
+    if (busy) return;
+    busy = true;
+
+    // если фраза уже висит — сбросить и сыграть заново
+    if (phrase.classList.contains('slam')) {
+      phrase.classList.remove('slam');
+      phrase.style.transition = 'opacity 0.25s';
+      phrase.style.opacity = '0';
+      await sleep(250);
+      phrase.style.transition = '';
+      phrase.style.opacity = '';
+      btn.classList.remove('charging', 'explode');
+      btn.style.display = '';
+      void btn.offsetWidth;
+      await sleep(120);
+    }
+
+    await epicSequence();
+    busy = false;
+  }
+
+  document.body.addEventListener('click', play);
+  document.body.addEventListener('touchstart', e => { e.preventDefault(); play(); }, { passive: false });
+  document.body.tabIndex = 0;
+  document.body.addEventListener('keydown', e => {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); play(); }
+  });
 </script>
 
 </body>
